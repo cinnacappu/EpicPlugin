@@ -1,0 +1,272 @@
+# pls don't change like the first 15 lines (including these)
+# if you wanna disable a command then put a hashtag and a space before it
+# if you change the version then the plugin will break just saying
+# you can take the decompiled .class files for your own plugin
+# just make sure to credit me, or not, i dont really care, but it would be epic if you did i guess
+# CoolPlugin is now called EpicPlugin because it is too epic B))))))))))))))))))
+name: EpicPlugin
+version: 3.5
+load: STARTUP
+author: RedstonerCKZ
+description: A very e p i c plugin
+main: com.redstonerckz.EpicPlugin.EpicPlugin
+api-version: 1.17
+website: https://www.youtube.com/channel/UCxVJr9r2zDzGml2uBjTJ-_Q
+commands:
+  epicplugin:
+    description: Plugin info
+    usage: /epicplugin
+    permission: epicplugin.epicplugin
+    aliases: [ep]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  e:
+    description: e
+    usage: /e
+    permission: epicplugin.e
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  epreload:
+    description: Reloads the plugin (Currently doesn't have a use, but here just in case)
+    usage: /epreload
+    permission: epicplugin.reload
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  c:
+    description: Sets your gamemode to creative
+    usage: /c (Player)
+    permission: epicplugin.c
+    aliases: [creative, gmc]
+    permission-message: §cI'm sorry, but you do not have permission to perform this command. Please contact server administrators if you believe that this is in error.
+  s:
+    description: Sets your gamemode to survival
+    usage: /s (Player)
+    permission: epicplugin.s
+    aliases: [survival, gms]
+    permission-message: §cI'm sorry, but you do not have permission to perform this command. Please contact server administrators if you believe that this is in error.
+  sp:
+    description: Sets your gamemode to spectator
+    usage: /sp (Player)
+    permission: epicplugin.sp
+    aliases: [spectator, gmsp]
+    permission-message: §cI'm sorry, but you do not have permission to perform this command. Please contact server administrators if you believe that this is in error.
+  a:
+    description: Sets your gamemode to adventure
+    usage: /a (Player)
+    permission: epicplugin.a
+    aliases: [adventure, gma]
+    permission-message: §cI'm sorry, but you do not have permission to perform this command. Please contact server administrators if you believe that this is in error.
+  waterbucket:
+    description: Gives you a water bucket
+    usage: /waterbucket
+    permission: epicplugin.waterbucket
+    permission-message: §cno mlg for u
+    aliases: [wb, waterb, wbucket, easymlg]
+  boat:
+    description: Gives you a boat
+    usage: /boat
+    permission: epicplugin.boat
+    permission-message: §cno mlg for u
+    aliases: [oakboat, hardmlg]
+  fly:
+    description: Makes you fly even in Survival and Adventure Mode
+    usage: /fly (Player)
+    permission: epicplugin.fly
+    aliases: [ibelieveicanfly]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  heal:
+    description: Restores your HP and hunger
+    usage: /heal
+    permission: epicplugin.heal
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  cmdblock:
+    description: Gives you a Command Block
+    usage: /cmdblock
+    permission: epicplugin.cmdblock
+    aliases: [cblock, cb, cmdb]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  rcmdblock:
+    description: Gives you a Repeating Command Block
+    usage: /rcmdblock
+    permission: epicplugin.rcmdblock
+    aliases: [rcblock, rcb, rcmdb]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  ccmdblock:
+    description: Gives you a Chain Command Block
+    usage: /ccmdblock
+    permission: epicplugin.ccmdblock
+    aliases: [ccblock, ccb, ccmdb]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  feed:
+    description: Restores your hunger to full
+    usage: /feed
+    permission: epicplugin.feed
+    aliases: [hungerup, hungerfull, fullhunger]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  heartup:
+    description: Restores your HP to full
+    usage: /heartup
+    permission: epicplugin.heartup
+    aliases: [hpup, hpfull, fullhp]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  barrier:
+    description: Gives a barrier block
+    usage: /barrier
+    permission: epicplugin.barrier
+    aliases: [air]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  k:
+    description: Shortcut for /kill
+    usage: /k (Player)
+    permission: epicplugin.k
+    aliases: [murder, assassinate, eliminate, terminate, oof]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  god:
+    description: Makes you invincible
+    usage: /god
+    permission: epicplugin.godmode
+    aliases: [invincible, superman, epgod]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  confess:
+    description: Makes you send chat messages as other players
+    usage: /confess (Player) (Message)
+    permission: epicplugin.confess
+    aliases: [sayas, chatas, says]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  broadcast:
+    description: Broadcast a message to the server
+    usage: /broadcast (msg)
+    permission: epicplugin.broadcast
+    aliases: [bcast, broadc, bc, announce, ann, shoutout, shout]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  calculate:
+    description: Calculate a math question (+,-,*,/)
+    usage: /calculate (1st number) (operation) (second number)
+    permission: epicplugin.calculate
+    aliases: [calc, solve, epcalculate]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  randomnumber:
+    description: Gives you a random number between a range you input
+    usage: /randomnumber (minimum) (maximum)
+    permission: epicplugin.randomnumber
+    aliases: [rng]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  explode:
+    description: Makes people explode ([Warning] This will damage the area around it)
+    usage: /explode (Player)
+    permission: epicplugin.explode
+    aliases: [boom, epexplode, epboom]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  nuke:
+    description: It's /explode but w o r s e
+    usage: /explode (Player)
+    permission: epicplugin.nuke
+    aliases: [hiroshima, nagasaki, epnuke]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  day:
+    description: Shortcut for /time set 0
+    usage: /day
+    permission: epicplugin.day
+    aliases: [0, light, epday]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  night:
+    description: Shortcut for /time set 13000
+    usage: /night
+    permission: epicplugin.night
+    aliases: [13000, dark, epnight]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  wclear:
+    description: Shortcut for clear weather
+    usage: /wclear
+    permission: epicplugin.wclear
+    aliases: [wcl, clearweather]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  rain:
+    description: Shortcut for rain
+    usage: /rain
+    permission: epicplugin.rain
+    aliases: [makeitrain, storm]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  thunder:
+    description: Shortcut for thunder
+    usage: /thunder
+    permission: epicplugin.thunder
+    aliases: [thunderstorm, lightningstorm, thdr]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  dayclear:
+    description: Makes it clear weather and daytime
+    usage: /dayclear
+    permission: epicplugin.dayclear
+    aliases: [dcl]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  nukerandom:
+    description: Nukes a random player
+    usage: /nukerandom
+    permission: epicplugin.nukerandom
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  exploderandom:
+    description: Explodes a random player
+    usage: /exploderandom
+    permission: epicplugin.exploderandom
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  whereis:
+    description: Shows you the co-ordinates of a player
+    usage: /whereis (Player)
+    permission: epicplugin.whereis
+    aliases: [coordsof, locationof, epwhereis]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  tphere:
+    description: Teleports a player to you (supposed to be a shortcut)
+    usage: /tphere (Player)
+    permission: epicplugin.tphere
+    aliases: [tph]
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  lightning:
+    description: Summons a lightning bolt on a player
+    usage: /lightning (Player)
+    aliases: [bolt]
+    permission: epicplugin.lightning
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  inhand:
+    description: (BETA) Tells you what object is currently (as of executing) in another player's hand
+    usage: /inhand (Player)
+    aliases: [checkhand, seehand]
+    permission: epicplugin.inhand
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  misclick:
+    description: Makes a player swing their main hand, as a "misclick"
+    usage: /misclick (Player)
+    aliases: [oops, swinghand]
+    permission: epicplugin.misclick
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  bed:
+    description: Tells you where a player's bed is
+    usage: /bed (Player)
+    aliases: [wherebed, findbed]
+    permission: epicplugin.bed
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  tnt:
+    description: Spawns TNT to a player's location
+    usage: /tnt (Player)
+    aliases: [9/11, blowup]
+    permission: epicplugin.tnt
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  tntrandom:
+    description: Spawns TNT to a random player's location
+    usage: /tntrandom
+    permission: epicplugin.tntrandom
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  guess:
+    description: (((NOT WORKING))) Number-guessing game, "original" source code still available, console-only
+    usage: guess
+    aliases: [numbergame]
+    permission: epicplugin.guess
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  superuserdo:
+    description: Attempts to execute a command as another player
+    usage: /superuserdo (Player) (Command)
+    aliases: [sudo, executeas]
+    permission: epicplugin.superuserdo
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  iamtryingtobenicebutitshard:
+    description: Makes being nice easier
+    usage: /iamtryingtobenicebutitshard (Message)
+    permission: epicplugin.iamtryingtobenicebutitshard
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
