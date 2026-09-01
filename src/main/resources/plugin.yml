@@ -1,16 +1,11 @@
-# pls dont change like the first 15 lines (including these)
-# if you want to disable a command then put a hashtag before it
-# if you change the version then the plugin will break just saying
-# you can take the decompiled .class files for your own plugin
-# just make sure to credit me, or not, i dont really care, but it would be epic if you did i guess
-# CoolPlugin is now called EpicPlugin because it is too epic B))))))))))))
+# Commands may be disabled by commenting out their whole entry.
 name: EpicPlugin
-version: 3.9
+version: 4.2.0
 load: STARTUP
-author: RedstonerCKZ
+author: cinna_cappu
 description: A very E P I C plugin
-main: com.redstonerckz.EpicPlugin.EpicPlugin
-api-version: 1.17
+main: com.cinnacappu.EpicPlugin.EpicPlugin
+api-version: '26.2'
 website: https://www.youtube.com/channel/UCxVJr9r2zDzGml2uBjTJ-_Q
 commands:
   epicplugin:
@@ -18,16 +13,6 @@ commands:
     usage: /epicplugin
     permission: epicplugin.epicplugin
     aliases: [ep]
-    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
-  h:
-    description: h
-    usage: /h
-    permission: epicplugin.h
-    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
-  epreload:
-    description: Reloads the plugin (Currently doesn't have a use, but here just in case)
-    usage: /epreload
-    permission: epicplugin.reload
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   c:
     description: Sets your gamemode to creative
@@ -64,17 +49,18 @@ commands:
     usage: /boat
     permission: epicplugin.boat
     permission-message: §cno mlg for u
-    aliases: [oakboat, hardmlg]
+    aliases: [oakboat, hardmlg, epboat]
   fly:
     description: Makes you fly even in Survival and Adventure Mode
     usage: /fly (Player)
     permission: epicplugin.fly
-    aliases: [ibelieveicanfly]
+    aliases: [ibelieveicanfly, epfly]
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   heal:
     description: Restores your HP and hunger
     usage: /heal
     permission: epicplugin.heal
+    aliases: [epheal]
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   cmdblock:
     description: Gives you a Command Block
@@ -98,7 +84,7 @@ commands:
     description: Restores your hunger to full
     usage: /feed
     permission: epicplugin.feed
-    aliases: [hungerup, hungerfull, fullhunger]
+    aliases: [hungerup, hungerfull, fullhunger epfeed]
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   heartup:
     description: Restores your HP to full
@@ -116,7 +102,7 @@ commands:
     description: Shortcut for /kill
     usage: /k (Player)
     permission: epicplugin.k
-    aliases: [murder, assassinate, eliminate, terminate, oof]
+    aliases: [murder, assassinate, eliminate, terminate, oof, grimaceshake]
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   god:
     description: Makes you invincible
@@ -134,7 +120,7 @@ commands:
     description: Broadcast a message to the server
     usage: /broadcast (msg)
     permission: epicplugin.broadcast
-    aliases: [bcast, broadc, bc, announce, ann, shoutout, shout]
+    aliases: [bcast, broadc, bc, announce, ann, shoutout, shout, epbc, epbroadcast]
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   calculate:
     description: Calculate a math question (+,-,*,/)
@@ -172,11 +158,11 @@ commands:
     permission: epicplugin.night
     aliases: [13000, dark, epnight]
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
-  wclear:
+  weatherclear:
     description: Shortcut for clear weather
-    usage: /wclear
+    usage: /weatherclear
     permission: epicplugin.wclear
-    aliases: [wcl, clearweather]
+    aliases: [wcl, clearweather, wclear]
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   rain:
     description: Shortcut for rain
@@ -216,7 +202,7 @@ commands:
     description: Teleports a player to you (supposed to be a shortcut)
     usage: /tphere (Player)
     permission: epicplugin.tphere
-    aliases: [tph]
+    aliases: [tph, eptphere, eptph]
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   lightning:
     description: Summons a lightning bolt on a player
@@ -227,7 +213,7 @@ commands:
   inhand:
     description: (BETA) Tells you what object is currently (as of executing) in another player's hand
     usage: /inhand (Player)
-    aliases: [checkhand, seehand]
+    aliases: [checkhand, seehand, epinhand]
     permission: epicplugin.inhand
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   misclick:
@@ -239,7 +225,7 @@ commands:
   bed:
     description: Tells you where a player's bed is
     usage: /bed (Player)
-    aliases: [wherebed, findbed]
+    aliases: [wherebed, findbed, epbed]
     permission: epicplugin.bed
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   tnt:
@@ -261,9 +247,15 @@ commands:
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   superuserdo:
     description: Attempts to execute a command as another player
-    usage: /superuserdo (Player) (Command)
-    aliases: [sudo, executeas]
+    usage: /superuserdo (player [optional]) (command), after executing, type /superuserdo (password)
+    aliases: [sudo, executeas, epsudo]
     permission: epicplugin.superuserdo
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  passwd:
+    description: Set sudo password (console only)
+    usage: /passwd
+    aliases: [password]
+    permission: epicplugin.passwd
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   iamtryingtobenicebutitshard:
     description: Makes being nice easier
@@ -278,20 +270,20 @@ commands:
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   broadcasttitle:
     description: Broadcasts a title instead of a message to the whole server
-    usage: The command structure is /broadcasttitle (size [big, medium, small]) (color [dark_green, gold, light_blue, etc.]) (fade-in duration [in seconds, i.e 3, 5, 10, etc.]) (title duration [in seconds]) (fade-out duration [in seconds]) (message to the world)
+    usage: The command structure is /broadcasttitle (size [big, medium, small]) (color [dark_green, gold, light_blue, etc.]) (style [normal, italic, bold]) (fade-in duration [in seconds, i.e 3, 5, 10, etc.]) (title duration [in seconds]) (fade-out duration [in seconds]) (message to the world)
     aliases: [bct, bcasttitle, broadctitle, announcetitle, anntitle]
     permission: epicplugin.broadcasttitle
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   damage:
     description: Damages a player using a specified amount
     usage: /damage (amount) (Player)
-    aliases: [hurt]
+    aliases: [hurt, epdamage]
     permission: epicplugin.damage
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   ping:
     description: Gets the ping of a player
     usage: /ping (Player)
-    aliases: [pong]
+    aliases: [pong, epping]
     permission: epicplugin.ping
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
   saveme:
@@ -300,3 +292,45 @@ commands:
     aliases: [tpup, idontwannadie]
     permission: epicplugin.saveme
     permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  lastdeath:
+    description: Tells the player their last death coordinates
+    usage: /lastdeath
+    aliases: [wheredeath, eplastdeath]
+    permission: epicplugin.lastdeath
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  saturation:
+    description: Tells the player their saturation level
+    usage: /saturation
+    aliases: [sat, epsaturation]
+    permission: epicplugin.saturation
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  joinspoof:
+    description: Spoofs a join message of whatever username specified
+    usage: /joinspoof (username)
+    aliases: [fakejoin]
+    permission: epicplugin.joinspoof
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  hunger:
+    description: Sets the hunger of a player to a specified value
+    usage: /hunger (amount) [player]
+    aliases: [sethunger, ephunger]
+    permission: epicplugin.hunger
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  zeus:
+    description: Summons lightning on a player, then kills them
+    usage: /zeus (player)
+    aliases: [lightningkill]
+    permission: epicplugin.zeus
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  saturate:
+    description: Sets the saturation of a player to a specified value
+    usage: /saturate (amount) [player]
+    aliases: [setsaturation]
+    permission: epicplugin.saturate
+    permission-message: §2§l[EP]§r§c You do not have the permissions to do that!
+  shakespeare:
+    description: Sends whatever message you want turned into Shakespearean English
+    usage: /shakespeare (english text)
+    aliases: [ss, oldspeak]
+    permission: epicplugin.shakespeare
+    permission-message: §2§l[EP]§r§c You're stuck in the 21st century for now
