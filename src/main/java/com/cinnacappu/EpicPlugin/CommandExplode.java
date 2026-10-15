@@ -14,8 +14,14 @@ public class CommandExplode implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player personWithTooMuchPower = (Player)sender;
+            if (args.length > 1) {
+                personWithTooMuchPower.sendMessage("§cUsage: /explode (Player)");
+                return true;
+            }
             if (args.length < 1) {
-                personWithTooMuchPower.getLocation().getWorld().createExplosion(personWithTooMuchPower.getLocation(), 10.0F, true);
+                float power = ExplosionSettings.power(sender, 10.0F);
+                if (Float.isNaN(power)) return true;
+                personWithTooMuchPower.getLocation().getWorld().createExplosion(personWithTooMuchPower.getLocation(), power, true);
                 if (personWithTooMuchPower.getGameMode() == GameMode.CREATIVE) {
                     personWithTooMuchPower.setHealth(0.0D);
                 }
@@ -29,7 +35,9 @@ public class CommandExplode implements CommandExecutor {
                     personWithTooMuchPower.sendMessage("§2§l[EP]§r§c Player '" + args[0] + "' not found");
                     return false;
                 }
-                veryUnfortunatePlayer.getLocation().getWorld().createExplosion(veryUnfortunatePlayer.getLocation(), 10.0F, true);
+                float power = ExplosionSettings.power(sender, 10.0F);
+                if (Float.isNaN(power)) return true;
+                veryUnfortunatePlayer.getLocation().getWorld().createExplosion(veryUnfortunatePlayer.getLocation(), power, true);
                 if (veryUnfortunatePlayer.getGameMode() == GameMode.CREATIVE) {
                     veryUnfortunatePlayer.setHealth(0.0D);
                 }

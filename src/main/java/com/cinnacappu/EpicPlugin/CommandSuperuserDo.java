@@ -3,7 +3,9 @@ package com.cinnacappu.EpicPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.security.MessageDigest;
@@ -11,11 +13,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.Base64;
 
-public class CommandSuperuserDo implements CommandExecutor {
+public class CommandSuperuserDo implements CommandExecutor, Listener {
 
+    private final EpicPlugin plugin;
     private final Map<UUID, PendingRequest> pending = new HashMap<>();
+    private final Set<UUID> lecturedPlayers = new HashSet<>();
+    private final List<String> lectureHistory;
 
-    // ✅ Now STATIC + PUBLIC (Option A)
     public static final Map<UUID, Long> sudoLastAuth = new HashMap<>();
 
     private static final int TIMEOUT_SECONDS = 30;     // pending sudo prompt timeout
@@ -30,16 +34,21 @@ public class CommandSuperuserDo implements CommandExecutor {
             "  #3) With great power comes great responsibility."
     };
 
-    public CommandSuperuserDo() {}
-
-    private JavaPlugin getPlugin() {
-        return JavaPlugin.getPlugin(EpicPlugin.class);
+    public CommandSuperuserDo(EpicPlugin plugin) {
+        this.plugin = plugin;
+        lectureHistory = plugin.getConfig().getStringList("sudo-lectured");
+        for (String uuid : lectureHistory) {
+            try {
+                lecturedPlayers.add(UUID.fromString(uuid));
+            } catch (IllegalArgumentException ex) {
+                plugin.getLogger().warning("Ignoring an invalid UUID in sudo-lectured: " + uuid);
+            }
+        }
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-        JavaPlugin plugin = getPlugin();
         String storedHash = plugin.getConfig().getString("sudo-password-hash", "");
 
         if (storedHash == null || storedHash.isBlank()) {
@@ -101,6 +110,7 @@ public class CommandSuperuserDo implements CommandExecutor {
 
             if (pr.isExpired()) {
                 pending.remove(uuid);
+                if (pr.expiryTask != null) pr.expiryTask.cancel();
                 player.sendMessage("§2§l[EP]§r§c Sudo request expired. Re-issue the command.");
                 return true;
             }
@@ -164,6 +174,7 @@ public class CommandSuperuserDo implements CommandExecutor {
                 executeSudo(player, targetUuid, cmdToRun);
                 return true;
             }
+            sudoLastAuth.remove(uuid);
         }
 
         /* ──────────────────────────────────────────
@@ -174,7 +185,7 @@ public class CommandSuperuserDo implements CommandExecutor {
         /* ──────────────────────────────────────────
          * Create pending sudo request
          * ────────────────────────────────────────── */
-        BukkitTask expiry = Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
+        BukkitTask expiry = Bukkit.getScheduler().runTaskLater(plugin, () -> {
             PendingRequest removed = pending.remove(uuid);
             if (removed != null) {
                 Player p = Bukkit.getPlayer(uuid);
@@ -192,7 +203,7 @@ public class CommandSuperuserDo implements CommandExecutor {
     }
 
     /* ──────────────────────────────────────────
-     * Execute sudo (delayed de-op)
+     * Execute sudo
      * ────────────────────────────────────────── */
     private void executeSudo(Player issuer, UUID targetUuid, String cmd) {
 
@@ -204,38 +215,53 @@ public class CommandSuperuserDo implements CommandExecutor {
                 return;
             }
 
-            boolean wasOp = target.isOp();
             try {
-                target.setOp(true);
-                Bukkit.dispatchCommand(target, cmd);
+                runWithOp(target, () -> Bukkit.dispatchCommand(target, cmd));
                 issuer.sendMessage("§2§l[EP]§r§a Ran as §e" + target.getName() + "§a: §e" + cmd);
             } catch (Exception ex) {
                 issuer.sendMessage("§2§l[EP]§r§c Error executing command as " + target.getName());
                 ex.printStackTrace();
             }
 
-            // ✅ delayed de-op (100 ms / 2 ticks)
-            if (!wasOp) {
-                Bukkit.getScheduler().runTaskLater(getPlugin(), () -> target.setOp(false), 2L);
-            }
             return;
         }
 
         // run as issuer
-        boolean wasOp = issuer.isOp();
         try {
-            issuer.setOp(true);
-            Bukkit.dispatchCommand(issuer, cmd);
+            runWithOp(issuer, () -> Bukkit.dispatchCommand(issuer, cmd));
             issuer.sendMessage("§2§l[EP]§r§a Ran: §e" + cmd);
         } catch (Exception ex) {
             issuer.sendMessage("§2§l[EP]§r§c Error executing command.");
             ex.printStackTrace();
         }
 
-        // ✅ delayed de-op
-        if (!wasOp) {
-            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> issuer.setOp(false), 2L);
+    }
+
+    static void runWithOp(Player player, Runnable command) {
+        boolean wasOp = player.isOp();
+        try {
+            player.setOp(true);
+            command.run();
+        } finally {
+            player.setOp(wasOp);
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        PendingRequest request = pending.remove(uuid);
+        if (request != null && request.expiryTask != null) request.expiryTask.cancel();
+        sudoLastAuth.remove(uuid);
+    }
+
+    public void shutdown() {
+        for (PendingRequest request : pending.values()) {
+            if (request.expiryTask != null) request.expiryTask.cancel();
+        }
+        pending.clear();
+        sudoLastAuth.clear();
+        lecturedPlayers.clear();
     }
 
     /* ──────────────────────────────────────────
@@ -260,20 +286,16 @@ public class CommandSuperuserDo implements CommandExecutor {
     }
 
     private void sendLectureIfNeeded(Player executor) {
-        JavaPlugin plugin = getPlugin();
-        List<String> lectured = plugin.getConfig().getStringList("sudo-lectured");
-        String uuidStr = executor.getUniqueId().toString();
-
-        if (lectured.contains(uuidStr)) return;
+        if (!lecturedPlayers.add(executor.getUniqueId())) return;
 
         executor.sendMessage("§2§l[EP]§r§a Before you proceed…");
         for (String line : SUDO_LECTURE_LINES) {
             executor.sendMessage("§7" + line);
         }
 
-        lectured.add(uuidStr);
-        plugin.getConfig().set("sudo-lectured", lectured);
-        plugin.saveConfig();
+        lectureHistory.add(executor.getUniqueId().toString());
+        plugin.getConfig().set("sudo-lectured", lectureHistory);
+        plugin.saveConfigLater();
     }
 
     /* pending request container */

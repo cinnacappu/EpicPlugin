@@ -1,68 +1,70 @@
 package com.cinnacappu.EpicPlugin;
 
+import java.util.Locale;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class CommandCalculate implements CommandExecutor {
     public CommandCalculate() {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Player player = (Player)sender;
-        String firstInt = args[0];
-        String operator = args[1];
-        String secondInt = args[2];
-        if (sender instanceof Player) {
-            double a = Integer.parseInt(firstInt);
-            double b = Integer.parseInt(secondInt);
-            double sum;
-            if (operator.contains("+")) {
-                sum = a + b;
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("-")) {
-                sum = a - b;
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("x")) {
-                sum = a * b;
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("*")) {
-                sum = a * b;
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("/")) {
-                sum = a / b;
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("sqrt")) {
-                sum = Math.sqrt(a);
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("squareroot")) {
-                sum = Math.sqrt(a);
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("root")) {
-                sum = Math.sqrt(a);
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("cbrt")) {
-                sum = Math.cbrt(a);
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("cuberoot")) {
-                sum = Math.cbrt(a);
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("square")) {
-                sum = Math.pow(a, 2);
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("squared")) {
-                sum = Math.pow(a, 2);
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("cube")) {
-                sum = Math.pow(a, 3);
-                player.sendMessage("§aAnswer = §2§l" + sum);
-            } else if (operator.contains("cubed")) {
-                sum = Math.pow(a, 3);
-                player.sendMessage("§aAnswer = §2§l" + sum);
+        if (args.length < 2 || args.length > 3) {
+            sender.sendMessage("§cUsage: /calculate (First Number) (Operator) (Second Number)");
+            return true;
+        }
+
+        String operator = args[1].toLowerCase(Locale.ROOT);
+        boolean unary = operator.equals("sqrt") || operator.equals("squareroot") || operator.equals("root")
+                || operator.equals("cbrt") || operator.equals("cuberoot") || operator.equals("square")
+                || operator.equals("squared") || operator.equals("cube") || operator.equals("cubed");
+        if (!unary && args.length != 3) {
+            sender.sendMessage("§cUsage: /calculate (First Number) (Operator) (Second Number)");
+            return true;
+        }
+
+        try {
+            double a = Double.parseDouble(args[0]);
+            double b = unary ? 0 : Double.parseDouble(args[2]);
+            if (!Double.isFinite(a) || !Double.isFinite(b)) {
+                sender.sendMessage("§cPlease enter finite numbers.");
+                return true;
             }
-        } else if (args.length < 0) {
-            player.sendMessage("§cUsage: /calculate (First Number) (Operator) (Second Number)");
+
+            double sum;
+            if (operator.equals("+")) {
+                sum = a + b;
+            } else if (operator.equals("-")) {
+                sum = a - b;
+            } else if (operator.equals("x") || operator.equals("*")) {
+                sum = a * b;
+            } else if (operator.equals("/")) {
+                if (b == 0) {
+                    sender.sendMessage("§cCannot divide by zero.");
+                    return true;
+                }
+                sum = a / b;
+            } else if (operator.equals("sqrt") || operator.equals("squareroot") || operator.equals("root")) {
+                sum = Math.sqrt(a);
+            } else if (operator.equals("cbrt") || operator.equals("cuberoot")) {
+                sum = Math.cbrt(a);
+            } else if (operator.equals("square") || operator.equals("squared")) {
+                sum = Math.pow(a, 2);
+            } else if (operator.equals("cube") || operator.equals("cubed")) {
+                sum = Math.pow(a, 3);
+            } else {
+                sender.sendMessage("§cUnknown operator. Use +, -, x, *, /, sqrt, cbrt, square or cube.");
+                return true;
+            }
+
+            if (!Double.isFinite(sum)) {
+                sender.sendMessage("§cThat calculation does not produce a finite real number.");
+                return true;
+            }
+            sender.sendMessage("§aAnswer = §2§l" + sum);
+        } catch (NumberFormatException ex) {
+            sender.sendMessage("§cPlease enter valid numbers.");
         }
         return true;
     }

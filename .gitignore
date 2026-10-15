@@ -1,5 +1,6 @@
 # Build output
 target/
+out/
 
 # IntelliJ IDEA project files
 .idea/

@@ -14,8 +14,14 @@ public class CommandNuke implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player personWithWayTooMuchPower = (Player)sender;
+            if (args.length > 1) {
+                personWithWayTooMuchPower.sendMessage("§cUsage: /nuke (Player)");
+                return true;
+            }
             if (args.length < 1) {
-                personWithWayTooMuchPower.getLocation().getWorld().createExplosion(personWithWayTooMuchPower.getLocation(), 100.0F, true);
+                float power = ExplosionSettings.power(sender, 100.0F);
+                if (Float.isNaN(power)) return true;
+                personWithWayTooMuchPower.getLocation().getWorld().createExplosion(personWithWayTooMuchPower.getLocation(), power, true);
                 if (personWithWayTooMuchPower.getGameMode() == GameMode.CREATIVE) {
                     personWithWayTooMuchPower.setHealth(0.0D);
                 }
@@ -29,7 +35,9 @@ public class CommandNuke implements CommandExecutor {
                     personWithWayTooMuchPower.sendMessage("§2§l[EP]§r§c Player '" + args[0] + "' not found");
                     return false;
                 }
-                extremelyUnfortunatePlayer.getLocation().getWorld().createExplosion(extremelyUnfortunatePlayer.getLocation(), 100.0F, true);
+                float power = ExplosionSettings.power(sender, 100.0F);
+                if (Float.isNaN(power)) return true;
+                extremelyUnfortunatePlayer.getLocation().getWorld().createExplosion(extremelyUnfortunatePlayer.getLocation(), power, true);
                 if (extremelyUnfortunatePlayer.getGameMode() == GameMode.CREATIVE) {
                     extremelyUnfortunatePlayer.setHealth(0.0D);
                 }

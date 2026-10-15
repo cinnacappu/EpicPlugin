@@ -1,14 +1,20 @@
 package com.cinnacappu.EpicPlugin;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Bukkit;
-import java.util.ArrayList;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-public class CommandFly implements CommandExecutor {
-    private final ArrayList<Player> flying_players_list = new ArrayList<>();
+public class CommandFly implements CommandExecutor, Listener {
+    private final Map<UUID, Boolean> flyingPlayers = new HashMap<>();
 
     public CommandFly() {
     }
@@ -17,19 +23,40 @@ public class CommandFly implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (player.hasPermission("epicplugin.fly")) {
-                if (this.flying_players_list.contains(player)) {
-                    this.flying_players_list.remove(player);
+                Boolean previousFlight = flyingPlayers.remove(player.getUniqueId());
+                if (previousFlight != null) {
                     player.sendMessage("§2§l[EP]§r§a Fly is now turned §2§loff!");
-                    player.setAllowFlight(false);
-                } else if (!this.flying_players_list.contains(player)) {
-                    this.flying_players_list.add(player);
+                    resetFlight(player, previousFlight);
+                } else {
+                    flyingPlayers.put(player.getUniqueId(), player.getAllowFlight());
                     player.sendMessage("§2§l[EP]§r§a Fly is now turned §2§lon!");
                     player.setAllowFlight(true);
                 }
             } else {
-                Bukkit.getLogger().info("§2§l[EP]§r§c You cannot do that!");
+                player.sendMessage("§2§l[EP]§r§c You cannot do that!");
             }
         }
         return true;
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        Boolean previousFlight = flyingPlayers.remove(player.getUniqueId());
+        if (previousFlight != null) resetFlight(player, previousFlight);
+    }
+
+    public void shutdown() {
+        for (Map.Entry<UUID, Boolean> entry : flyingPlayers.entrySet()) {
+            Player player = Bukkit.getPlayer(entry.getKey());
+            if (player != null) resetFlight(player, entry.getValue());
+        }
+        flyingPlayers.clear();
+    }
+
+    private void resetFlight(Player player, boolean previousFlight) {
+        if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) return;
+        if (!previousFlight) player.setFlying(false);
+        player.setAllowFlight(previousFlight);
     }
 }

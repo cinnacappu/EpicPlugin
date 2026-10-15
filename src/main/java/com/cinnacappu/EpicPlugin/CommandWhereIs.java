@@ -11,6 +11,10 @@ public class CommandWhereIs implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length != 1) {
+            sender.sendMessage("§2§l[EP]§r§c You need to specify someone: /whereis (Player)");
+            return true;
+        }
         if (sender instanceof Player) {
             Player player = (Player)sender;
             Player target = Bukkit.getPlayerExact(args[0]);
@@ -22,9 +26,6 @@ public class CommandWhereIs implements CommandExecutor {
             String y = String.valueOf(target.getLocation().getBlockY());
             String z = String.valueOf(target.getLocation().getBlockZ());
             player.sendMessage("§aThe location of " + target.getDisplayName() + " is at §2§l" + x + " " + y + " " + z);
-            if (args.length < 0) {
-                player.sendMessage("§2§l[EP]§r§c You need to specify someone");
-            }
         }
         return true;
     }

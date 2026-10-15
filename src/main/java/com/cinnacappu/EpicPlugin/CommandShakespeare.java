@@ -7,12 +7,11 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CommandShakespeare implements CommandExecutor, Listener {
 
@@ -28,7 +27,8 @@ public class CommandShakespeare implements CommandExecutor, Listener {
     private final Set<UUID> enabledPlayers = ConcurrentHashMap.newKeySet();
 
     // final compiled replacements
-    private final LinkedHashMap<Pattern, String> replacements = new LinkedHashMap<>();
+    private final List<Replacement> replacements = new ArrayList<>();
+    private final ReplacementNode replacementRoot = new ReplacementNode();
 
     // lore fragments
     private final List<String> loreAdds = new ArrayList<>();
@@ -96,6 +96,15 @@ public class CommandShakespeare implements CommandExecutor, Listener {
         e.setMessage(" " + out);
     }
 
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        enabledPlayers.remove(e.getPlayer().getUniqueId());
+    }
+
+    public void shutdown() {
+        enabledPlayers.clear();
+    }
+
 
     /*=============================================
     TEXT PROCESSING
@@ -107,11 +116,55 @@ public class CommandShakespeare implements CommandExecutor, Listener {
 
     private String applyReplacements(String text) {
         String out = text;
-        for (Map.Entry<Pattern, String> entry : replacements.entrySet()) {
-            Matcher m = entry.getKey().matcher(out);
-            out = m.replaceAll(entry.getValue());
+        BitSet matches = new BitSet(replacements.size());
+        findReplacements(out, 0, matches);
+        for (int index = matches.nextSetBit(0); index >= 0; index = matches.nextSetBit(index + 1)) {
+            out = replacements.get(index).apply(out);
+            matches.clear();
+            findReplacements(out, index + 1, matches);
         }
         return out;
+    }
+
+    private void findReplacements(String text, int firstRule, BitSet matches) {
+        for (int start = 0; start < text.length(); start++) {
+            if (start > 0 && isAsciiLetter(text.charAt(start - 1))) continue;
+            ReplacementNode node = replacementRoot;
+            for (int end = start; end < text.length(); end++) {
+                node = node.children.get(text.charAt(end));
+                if (node == null) break;
+                if (end + 1 == text.length() || !isAsciiLetter(text.charAt(end + 1))) {
+                    for (int index : node.rules) {
+                        if (index >= firstRule) matches.set(index);
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean isAsciiLetter(char c) {
+        return c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z';
+    }
+
+    private static final class ReplacementNode {
+        private final Map<Character, ReplacementNode> children = new HashMap<>();
+        private final List<Integer> rules = new ArrayList<>();
+    }
+
+    private record Replacement(String from, String to) {
+        private String apply(String text) {
+            StringBuilder out = new StringBuilder(text.length());
+            int previous = 0;
+            for (int start = text.indexOf(from); start >= 0; start = text.indexOf(from, start + 1)) {
+                int end = start + from.length();
+                if (start > 0 && isAsciiLetter(text.charAt(start - 1))) continue;
+                if (end < text.length() && isAsciiLetter(text.charAt(end))) continue;
+                out.append(text, previous, start).append(to);
+                previous = end;
+                start = end - 1;
+            }
+            return out.append(text, previous, text.length()).toString();
+        }
     }
 
     private String maybeAddLore(String text) {
@@ -419,8 +472,12 @@ public class CommandShakespeare implements CommandExecutor, Listener {
     }
 
     private void addPattern(String from, String to) {
-        String pattern = "(?<![A-Za-z])" + Pattern.quote(from) + "(?![A-Za-z])";
-        replacements.put(Pattern.compile(pattern), Matcher.quoteReplacement(to));
+        ReplacementNode node = replacementRoot;
+        for (int i = 0; i < from.length(); i++) {
+            node = node.children.computeIfAbsent(from.charAt(i), key -> new ReplacementNode());
+        }
+        node.rules.add(replacements.size());
+        replacements.add(new Replacement(from, to));
     }
 
     private static String cap(String s) {

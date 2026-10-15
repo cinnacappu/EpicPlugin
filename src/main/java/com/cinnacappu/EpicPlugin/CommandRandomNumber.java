@@ -4,26 +4,27 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class CommandRandomNumber implements CommandExecutor {
     public CommandRandomNumber() {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Player player = (Player) sender;
-        String minimum = args[0];
-        String maximum = args[1];
-        int min = Integer.parseInt(minimum);
-        int max = Integer.parseInt(maximum);
-        int randomNumber = ThreadLocalRandom.current().nextInt(min, max + 1);
-        if (sender instanceof Player) {
-            player.sendMessage("§aNumber Generated: §2§l" + randomNumber);
-        } else if (minimum.contains("0")) {
-            int randomNumberMinZero = randomNumber + 1;
-            player.sendMessage("§aNumber Generated: §2§l" + randomNumberMinZero);
-        } else if (args.length < 1) {
-            player.sendMessage("§cUsage: /randomnumber (minimum) (maximum)");
+        if (args.length != 2) {
+            sender.sendMessage("§cUsage: /randomnumber (minimum) (maximum)");
+            return true;
+        }
+        try {
+            int min = Integer.parseInt(args[0]);
+            int max = Integer.parseInt(args[1]);
+            if (min > max) {
+                sender.sendMessage("§cMinimum cannot be greater than maximum.");
+                return true;
+            }
+            int randomNumber = (int) ThreadLocalRandom.current().nextLong(min, (long) max + 1);
+            sender.sendMessage("§aNumber Generated: §2§l" + randomNumber);
+        } catch (NumberFormatException ex) {
+            sender.sendMessage("§cPlease enter whole numbers between -2147483648 and 2147483647.");
         }
         return true;
     }

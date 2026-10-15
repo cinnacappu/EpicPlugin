@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.IllegalPluginAccessException;
 
 final class EpicPluginUpdateChecker {
 
@@ -37,12 +38,12 @@ final class EpicPluginUpdateChecker {
                 try (Scanner scanner = new Scanner(connection.getInputStream(), StandardCharsets.UTF_8)) {
                     if (scanner.hasNextLine()) {
                         String version = scanner.nextLine().trim();
-                        if (!version.isEmpty()) {
+                        if (!version.isEmpty() && plugin.isEnabled()) {
                             Bukkit.getScheduler().runTask(plugin, () -> onSuccess.accept(version));
                         }
                     }
                 }
-            } catch (IOException exception) {
+            } catch (IOException | IllegalPluginAccessException exception) {
                 plugin.getLogger().fine(
                         "Unable to check for an EpicPlugin update: " + exception.getMessage());
             } finally {
@@ -51,5 +52,19 @@ final class EpicPluginUpdateChecker {
                 }
             }
         });
+    }
+
+    static boolean isNewer(String available, String current) {
+        if (available == null || current == null
+                || !available.matches("[0-9]+(\\.[0-9]+)*") || !current.matches("[0-9]+(\\.[0-9]+)*")) return false;
+        String[] remoteParts = available.split("\\.");
+        String[] localParts = current.split("\\.");
+        for (int i = 0; i < Math.max(remoteParts.length, localParts.length); i++) {
+            java.math.BigInteger remote = new java.math.BigInteger(i < remoteParts.length ? remoteParts[i] : "0");
+            java.math.BigInteger local = new java.math.BigInteger(i < localParts.length ? localParts[i] : "0");
+            int comparison = remote.compareTo(local);
+            if (comparison != 0) return comparison > 0;
+        }
+        return false;
     }
 }

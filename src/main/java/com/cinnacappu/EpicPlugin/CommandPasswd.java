@@ -33,6 +33,11 @@ public class CommandPasswd implements CommandExecutor {
         /* Stage 1 — ask for new password */
         if (!waitingSecond) {
 
+            if (args.length > 1) {
+                sender.sendMessage("§2§l[EP]§r§c Please enter only one password.");
+                return true;
+            }
+
             // If password supplied on same invocation: /passwd <newpass>
             if (args.length == 1) {
                 awaitingFirst = args[0];
@@ -58,9 +63,8 @@ public class CommandPasswd implements CommandExecutor {
             String confirm = args[0];
 
             if (awaitingFirst == null) {
-                // Should not happen but safe reset
-                resetState();
-                sender.sendMessage("§2§l[EP]§r§c Unexpected state. Try again.");
+                awaitingFirst = confirm;
+                sender.sendMessage("§2§l[EP]§r§a Retype new password:");
                 return true;
             }
 

@@ -14,14 +14,12 @@ public class CommandIAmTryingToBeNiceButItsHard implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (args.length < 0) {
+            if (args.length == 0) {
                 player.sendMessage("§cUsage: /iamtryingtobenicebutitshard (Message)");
+                return true;
             }
             Server everyone = Bukkit.getServer();
-            String msg = "";
-            for (int i = 0; i != args.length; ++i) {
-                msg = msg + args[i] + " ";
-            }
+            String msg = String.join(" ", args) + " ";
             char[] charArr = msg.toCharArray();
             StringBuilder sb = new StringBuilder();
             boolean switchCase = false;

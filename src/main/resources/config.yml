@@ -1,0 +1,4 @@
+explosions:
+  max-power: 100.0
+  cooldown-seconds: 5.0
+sudo-lectured: []
