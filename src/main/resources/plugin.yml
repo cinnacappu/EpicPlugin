@@ -1,11 +1,11 @@
 # Commands may be disabled by commenting out their whole entry.
 name: EpicPlugin
-version: 4.2.0
+version: 4.3.0
 load: STARTUP
 author: cinna_cappu
 description: A very E P I C plugin
 main: com.cinnacappu.EpicPlugin.EpicPlugin
-api-version: '26.2'
+api-version: '26.3'
 website: https://www.youtube.com/channel/UCxVJr9r2zDzGml2uBjTJ-_Q
 commands:
   epicplugin:
